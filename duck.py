@@ -20,6 +20,7 @@ class App(object):
 	def __init__(self):
 
 		self.near = 1
+		self.far  = 1000
 		self.fov  = 60
 
 		builder = gtk.Builder()
@@ -33,14 +34,16 @@ class App(object):
 
 		builder.get_object("vbox1").pack_start(self.drawing_area)
 
+		self.scene = Scene( self.fov , 1 , self.near , self.far )
+		self.drawing_area.add( self.scene )
+
 		builder.get_object("win_main").show_all()
 
 		width = self.drawing_area.allocation.width
 		height = self.drawing_area.allocation.height
 		ratio = float(width)/float(height)
 
-		self.scene = Scene( self.fov , ratio , self.near )
-		self.drawing_area.add( self.scene )
+		self.scene.set_ratio( ratio )
 
 		builder.connect_signals(self)
 
@@ -50,6 +53,12 @@ class App(object):
 		self.drawing_area.connect('button_press_event',self._on_button_pressed)
 		self.drawing_area.connect('configure_event',self._on_reshape)
 		self.drawing_area.connect_after('expose_event',self._after_draw)
+
+		gtk.timeout_add( 1 , self._refresh )
+
+	def _refresh( self ) :            
+		self.drawing_area.queue_draw()
+		return True    
 
 	def _after_draw( self , widget , data=None ) :
 		self.update_statusbar()
