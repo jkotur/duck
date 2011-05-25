@@ -12,7 +12,7 @@ import membrane
 
 class Water :
 	def __init__( self , n = 256 ) :
-		self.n = 22
+		self.n = 28
 		self.h = 2.0 / (self.n-1)
 		self.c = 1.0
 		self.maxdt = 1.0 / self.n
@@ -75,6 +75,7 @@ class Water :
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
 		glTexImage2D(GL_TEXTURE_2D,0,GL_RGB16F,self.n,self.n,0,GL_RGB,GL_FLOAT,self.norm)
+		glBindTexture(GL_TEXTURE_2D, 0)
 
 	def _mk_shaders( self ) :
 		try : 
@@ -89,7 +90,9 @@ class Water :
 
 	def _up_texture( self , w ) :
 		membrane.to_normals( w , self.norm , self.n )
+		glBindTexture(GL_TEXTURE_2D, self.ntex )
 		glTexImage2D(GL_TEXTURE_2D,0,GL_RGB16F,self.n,self.n,0,GL_RGB,GL_FLOAT,self.norm)
+		glBindTexture(GL_TEXTURE_2D, 0)
 
 	def draw( self ) :
 		glUseProgram( self.prog )
@@ -99,6 +102,8 @@ class Water :
 						 
 		glUniformMatrix4fv(self.loc_mmv,1,GL_FALSE,mmv)
 		glUniformMatrix4fv(self.loc_mp ,1,GL_FALSE,mp )
+
+		glBindTexture(GL_TEXTURE_2D, self.ntex )
 
 		glBegin(GL_QUADS)
 		glNormal3f( 0,1, 0)
@@ -111,6 +116,8 @@ class Water :
 		glTexCoord2d(1,0)
 		glVertex3f( 1,0,-1)
 		glEnd()
+
+		glBindTexture(GL_TEXTURE_2D, 0)
 
 		glUseProgram( 0 )
 

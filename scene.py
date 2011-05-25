@@ -13,6 +13,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 from water import Water
+from skybox import Skybox
 from camera import Camera
 
 if sys.platform.startswith('win') :
@@ -21,7 +22,7 @@ else:
 	timer = time.time
 
 class Scene :
-	def __init__( self , fov , ratio , near , far ) :
+	def __init__( self , fov , ratio , near , far  , skybox_img ) :
 		self.fov = fov
 		self.far = far
 		self.near = near 
@@ -30,6 +31,7 @@ class Scene :
 		self.last_time = timer()
 
 		self.water = Water( 256 )
+		self.box   = Skybox( skybox_img )
 
 		self.water.drop_rnd()
 
@@ -38,6 +40,7 @@ class Scene :
 		self._update_proj()
 
 		self.water.gfx_init()
+		self.box.gfx_init()
 
 	def draw( self ) :
 		self.time = timer()
@@ -47,6 +50,8 @@ class Scene :
 		glLoadIdentity()
 			   
 		self.camera.look()
+
+		self.box.draw()
 
 		self.water.step( dt )
 		self.water.draw()

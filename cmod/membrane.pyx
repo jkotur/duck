@@ -14,12 +14,12 @@ cdef float d( int i , int j ) :
 @cython.cdivision(True)
 def step( np.ndarray[ float , ndim=2 ] win not None , np.ndarray[ float , ndim=2 ] wout not None ,
 		int n , float h , float c , float dt ) :
+	cdef float zij 
+	cdef float zoij
 	cdef float zipj
 	cdef float zimj
 	cdef float zijp
 	cdef float zijm
-	cdef float zij 
-	cdef float zoij
 
 	cdef float A = (c*c*dt*dt)/(h*h)
 	cdef float B = 2.0 - 4.0*A
@@ -36,17 +36,16 @@ def step( np.ndarray[ float , ndim=2 ] win not None , np.ndarray[ float , ndim=2
 
 	for i in range(n) :
 		for j in range(n) :
-			zij  = win [i  ][j  ]
-			zoij = wout[i  ][j  ]
-			zipj = win [i+1][j  ] if i+1 <  n else zij
-			zimj = win [i-1][j  ] if i-1 >= 0 else zij
-			zijp = win [i  ][j+1] if j+1 <  n else zij
-			zijm = win [i  ][j-1] if j-1 >= 0 else zij
+			zij  = win [i  ,j  ]
+			zoij = wout[i  ,j  ]
+			zipj = win [i+1,j  ] if i+1 <  n else zij
+			zimj = win [i-1,j  ] if i-1 >= 0 else zij
+			zijp = win [i  ,j+1] if j+1 <  n else zij
+			zijm = win [i  ,j-1] if j-1 >= 0 else zij
 
-			wout[i][j] = d(i,j)*(A*(zipj+zimj+zijp+zijm)+B*zij-zoij)
+			wout[i,j] = d(i,j)*(A*(zipj+zimj+zijp+zijm)+B*zij-zoij)
 
-#                        if m.isnan( wout[ i + j*n ] ) or m.isinf(wout[ i + j*n ]) :
-			if wout[i][j] > 1.0 or wout[i][j] < -1.0 :
+			if wout[i,j] > 1.0 or wout[i,j] < -1.0 :
 					print '<<<<<<<<<<<<'
 					print n , h , c , dt
 					print A
@@ -62,10 +61,10 @@ def step( np.ndarray[ float , ndim=2 ] win not None , np.ndarray[ float , ndim=2
 					print 
 					print wout[i][j]
 					print '<<<<<<<<<<<<'
-
+	return None
 
 @cython.boundscheck(False)
-cpdef int to_normals( np.ndarray[ float , ndim=2 ] mem , np.ndarray[ float , ndim=3 ] norm ,
+def to_normals( np.ndarray[ float , ndim=2 ] mem , np.ndarray[ float , ndim=3 ] norm ,
 				int n ) :
 	''' Converts height map to normal map by calculating divided differences
 
@@ -76,21 +75,24 @@ cpdef int to_normals( np.ndarray[ float , ndim=2 ] mem , np.ndarray[ float , ndi
 		|    |    |
 		X  - N4 - X
 	'''
+	cdef int i , j
 	cdef float p , n1 , n2 , n3 , n4
 	cdef np.ndarray[ float , ndim=1 ] an1 , an2 , an3 , an4
 
 	for i in range(n) :
 		for j in range(n) :
-			p  = mem[i  ][j  ]
-			n1 = mem[i  ][j+1] if j+1 <  n else p
-			n2 = mem[i-1][j  ] if i-1 >= 0 else p
-			n3 = mem[i+1][j  ] if i+1 <  n else p
-			n4 = mem[i  ][j-1] if j-1 >= 0 else p
+			p  = mem[i  ,j  ]
+			n1 = mem[i  ,j+1] if j+1 <  n else p
+			n2 = mem[i-1,j  ] if i-1 >= 0 else p
+			n3 = mem[i+1,j  ] if i+1 <  n else p
+			n4 = mem[i  ,j-1] if j-1 >= 0 else p
 
 			an1 = np.array((i  , n1, j+1),np.float32)
 			an2 = np.array((i-1, n2, j  ),np.float32)
 			an3 = np.array((i+1, n3, j  ),np.float32)
 			an4 = np.array((i  , n4, j-1),np.float32)
 
-			norm[i][j] = np.cross( an3-an2 , an1-an4 )
+			norm[i,j] = np.cross( an3-an2 , an1-an4 )
+
+	return None
 
