@@ -29,13 +29,15 @@ class Scene :
 
 		self.last_time = timer()
 
-		self.water = Water( 32 )
+		self.water = Water( 256 )
 
 		self.water.drop_rnd()
 
 	def gfx_init( self ) :
 		self.camera = Camera( ( 0 , 5 ,  0 ) , ( 1 , 1 , 0 ) , ( 1 , 0 , 0 ) )
 		self._update_proj()
+
+		self.water.gfx_init()
 
 	def draw( self ) :
 		self.time = timer()
