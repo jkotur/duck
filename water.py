@@ -12,7 +12,7 @@ import membrane
 
 class Water :
 	def __init__( self , n = 256 ) :
-		self.n = 28
+		self.n = n
 		self.h = 2.0 / (self.n-1)
 		self.c = 1.0
 		self.maxdt = 1.0 / self.n
@@ -83,7 +83,8 @@ class Water :
 
 			self.loc_mmv   = sh.get_loc(self.prog,'modelview' )
 			self.loc_mp    = sh.get_loc(self.prog,'projection')
-			self.loc_norms = sh.get_loc( self.prog , 'normalmap' )
+			self.loc_norms = sh.get_loc(self.prog,'normalmap' )
+			self.loc_cube  = sh.get_loc(self.prog,'cubemap'   )
 		except ValueError as ve :
 			print "Shader compilation failed: " + str(ve)
 			sys.exit(0)    
@@ -94,7 +95,7 @@ class Water :
 		glTexImage2D(GL_TEXTURE_2D,0,GL_RGB16F,self.n,self.n,0,GL_RGB,GL_FLOAT,self.norm)
 		glBindTexture(GL_TEXTURE_2D, 0)
 
-	def draw( self ) :
+	def draw( self , cube_tex ) :
 		glUseProgram( self.prog )
                  
 		mmv = glGetFloatv(GL_MODELVIEW_MATRIX)
@@ -102,8 +103,13 @@ class Water :
 						 
 		glUniformMatrix4fv(self.loc_mmv,1,GL_FALSE,mmv)
 		glUniformMatrix4fv(self.loc_mp ,1,GL_FALSE,mp )
+		glUniform1i(self.loc_norms,0)
+		glUniform1i(self.loc_cube ,1)
 
+		glActiveTexture(GL_TEXTURE0)
 		glBindTexture(GL_TEXTURE_2D, self.ntex )
+		glActiveTexture(GL_TEXTURE1)
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cube_tex )
 
 		glBegin(GL_QUADS)
 		glNormal3f( 0,1, 0)
@@ -117,6 +123,8 @@ class Water :
 		glVertex3f( 1,0,-1)
 		glEnd()
 
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0 )
+		glActiveTexture(GL_TEXTURE0)
 		glBindTexture(GL_TEXTURE_2D, 0)
 
 		glUseProgram( 0 )

@@ -17,14 +17,15 @@ class Skybox :
 		self.img = img
 		self.tex = 0
 
+	@property
+	def texture( self ) :
+		return self.tex
+
 	def gfx_init( self ) :
 		self._mk_texture() 
 		self._mk_box()
 
 	def _mk_texture( self ) :
-		data = np.zeros((self.img.width,self.img.height,4),np.ubyte) + 128
-#        print self.img.width , self.img.height
-
 		self.tex = glGenTextures( 1 )
 		glBindTexture(GL_TEXTURE_CUBE_MAP, self.tex )
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S    , GL_CLAMP  )
@@ -37,7 +38,6 @@ class Skybox :
 
 	def _mk_box( self ) :
 		self.verts = np.array( ((-1,-1,-1),(-1,-1,1),(-1,1,1),(1,1,1),(1,-1,1),(1,-1,-1),(1,1,-1),(-1,1,-1)) , np.float32 )
-		self.coords= np.array( ((0,0),(0,1),(0,1),(1,1),(1,0),(1,0),(1,1),(0,1)) , np.float32 )
 		self.ind   = np.array( (7,2,1,0, 6,5,4,3, 0,1,4,5, 7,6,3,2, 0,5,6,7, 1,2,3,4) , np.uint32 )
 
 	def draw( self ):
