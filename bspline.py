@@ -16,8 +16,10 @@ class BSpline :
 		self.yb = ybounds
 		self._init_bspline()
 		self.pts  = [ self._rand() for i in range(4) ]
+		self.futr = None
 		self.curr = None
 		self.prev = None
+		self.next(1)
 		self.next(1)
 
 	def _init_bspline( self ) :
@@ -51,6 +53,15 @@ class BSpline :
 			self.t -= self.nums
 			self.rand()
 		self.prev = self.curr
-		self.curr = self.calc( self.t )
+		self.curr = self.futr
+		self.futr = self.calc( self.t )
 		return self.curr
+
+	@property
+	def value( self ) :
+		return self.curr
+
+	@property
+	def tangent( self ) :
+		return self.futr - self.prev
 

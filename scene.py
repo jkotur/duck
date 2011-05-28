@@ -63,7 +63,7 @@ class Scene :
 		self.water.step( dt )
 		self.water.draw( self.box.texture , self.camera.matrix )
 
-		self.duck.draw()
+		self.duck.draw( self.path.value , self.path.tangent )
 
 		self.last_time = self.time
 

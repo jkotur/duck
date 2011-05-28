@@ -1,4 +1,5 @@
 
+import math as m
 import numpy as np
 
 from OpenGL.GL import *
@@ -12,7 +13,7 @@ class Mesh :
 	def gfx_init( self ) :
 		self._load_img( self.img )
 
-	def draw( self ) :
+	def draw( self , pos , dir ) :
 		glEnableClientState( GL_VERTEX_ARRAY )
 		glEnableClientState( GL_NORMAL_ARRAY )
 		glEnableClientState( GL_TEXTURE_COORD_ARRAY )
@@ -25,7 +26,9 @@ class Mesh :
 		glBindTexture( GL_TEXTURE_2D , self.tex )
 
 		glPushMatrix()
-		glScaled(.001,.001,.001)
+		glTranslatef( pos[0] , 0 , pos[1] )
+		glRotatef( m.atan2( dir[0] , dir[1] )*180.0/m.pi + 90.0 , 0 , 1 , 0 )
+		glScalef(.001,.001,.001)
 
 		glDrawElements( GL_TRIANGLES , len(self.ind) , GL_UNSIGNED_INT , self.ind )
 
