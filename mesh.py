@@ -1,19 +1,38 @@
+import sys
 
 import math as m
 import numpy as np
 
 from OpenGL.GL import *
 
+import shaders as sh
+
 class Mesh :
-	def __init__( self , path , img ) :
+	def __init__( self , path , img , shad ) :
 		self._from_path( path )
 		self.img = img
+		self.shad_path = shad
 		self.tex = 0
+		self.prog = 0
 
 	def gfx_init( self ) :
 		self._load_img( self.img )
+		self._load_shader( self.shad_path )
 
-	def draw( self , pos , dir ) :
+	def _load_shader( self , path ) :
+		try : 
+			self.prog = sh.compile_program(path)
+
+			self.loc_mmv   = sh.get_loc(self.prog,'modelview' )
+			self.loc_mp    = sh.get_loc(self.prog,'projection')
+			self.loc_tex   = sh.get_loc(self.prog,'texture'   )
+			self.loc_light = sh.get_loc(self.prog,'light'     )
+			self.loc_anix  = sh.get_loc(self.prog,'xdir'      )
+		except ValueError as ve :
+			print "Shader compilation failed: " + str(ve)
+			sys.exit(0)    
+
+	def draw( self , pos , dir , lpos ) :
 		glEnableClientState( GL_VERTEX_ARRAY )
 		glEnableClientState( GL_NORMAL_ARRAY )
 		glEnableClientState( GL_TEXTURE_COORD_ARRAY )
@@ -22,19 +41,37 @@ class Mesh :
 		glNormalPointer  (     GL_FLOAT , 0 , self.norms )
 		glTexCoordPointer( 2 , GL_FLOAT , 0 , self.coord )
 
-		glEnable( GL_TEXTURE_2D )
-		glBindTexture( GL_TEXTURE_2D , self.tex )
-
+		mmv = glGetFloatv(GL_MODELVIEW_MATRIX)
+		lpos = np.resize(lpos,4)
+		lpos[3] = 1.0;
+		lpos = np.dot( lpos , mmv )
+						 
 		glPushMatrix()
 		glTranslatef( pos[0] , 0 , pos[1] )
 		glRotatef( m.atan2( dir[0] , dir[1] )*180.0/m.pi + 90.0 , 0 , 1 , 0 )
 		glScalef(.001,.001,.001)
 
+		glUseProgram( self.prog )
+
+		mmv = glGetFloatv(GL_MODELVIEW_MATRIX)
+		mp  = glGetFloatv(GL_PROJECTION_MATRIX)
+
+		xdir = np.dot( np.array((1,0,0,0)),mmv )
+
+		glUniformMatrix4fv(self.loc_mmv,1,GL_FALSE,mmv)
+		glUniformMatrix4fv(self.loc_mp ,1,GL_FALSE,mp )
+		glUniform1i(self.loc_tex,0)
+		glUniform3f(self.loc_light,lpos[0],lpos[1],lpos[2])
+		glUniform3f(self.loc_anix ,xdir[0],xdir[1],xdir[2])
+
+		glBindTexture( GL_TEXTURE_2D , self.tex )
+
 		glDrawElements( GL_TRIANGLES , len(self.ind) , GL_UNSIGNED_INT , self.ind )
+
+		glUseProgram( 0 )
 
 		glPopMatrix()
 
-		glDisable( GL_TEXTURE_2D )
 		glDisableClientState( GL_VERTEX_ARRAY )
 		glDisableClientState( GL_NORMAL_ARRAY )
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY )

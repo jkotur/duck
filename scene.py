@@ -34,8 +34,10 @@ class Scene :
 
 		self.water = Water( 128 )
 		self.box   = Skybox( skybox_img )
-		self.duck  = Mesh( 'data/duck.gpt' , duck_img )
+		self.duck  = Mesh( 'data/duck.gpt' , duck_img , 'shad/anisotropic' )
 		self.path  = BSpline( (-1,1) , (-1,1) )
+
+		self.light = np.array( (0,2,0) )
 
 		self.water.drop_rnd()
 
@@ -64,7 +66,7 @@ class Scene :
 		self.water.step( dt * .5 )
 		self.water.draw( self.box.texture , self.camera.matrix )
 
-		self.duck.draw( self.path.value , self.path.tangent )
+		self.duck.draw( self.path.value , self.path.tangent , self.light )
 
 		self.last_time = self.time
 
@@ -106,7 +108,7 @@ class Scene :
 		self.camera.rot( *map( lambda x : -x*.2 , df ) )
 
 	def key_pressed( self , mv ) :
-		self.camera.move( *map( lambda x : x*.25 , mv ) )
+		self.camera.move( *map( lambda x : x*.05 , mv ) )
 
 	def _update_proj( self ) :                                         
 		glMatrixMode(GL_PROJECTION)

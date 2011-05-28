@@ -24,8 +24,8 @@ class App(object):
 
 		self._init_keyboard()
 
-		self.near = 1
-		self.far  = 1000
+		self.near = .01 
+		self.far  = 10
 		self.fov  = 60
 
 		builder = gtk.Builder()
