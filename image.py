@@ -5,6 +5,14 @@ class Image :
 		self.height = h
 		self.data   = data
 
+	@property
+	def w( self ) :
+		return self.width 
+
+	@property 
+	def h( self ) :
+		return self.height
+
 class CubeImage :
 	def __init__( self , w , h , datas ) :
 		self.width  = w

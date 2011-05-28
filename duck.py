@@ -15,6 +15,7 @@ from image import Image , CubeImage
 
 ui_file = "duck.ui"
 skybox_files = [ "data/cube{0}.png".format(i) for i in range(6) ]
+duck_file = 'data/ducktex.jpg'
 
 class App(object):
 	"""Application main class"""
@@ -38,7 +39,7 @@ class App(object):
 
 		builder.get_object("vbox1").pack_start(self.drawing_area)
 
-		self.scene = Scene( self.fov , 1 , self.near , self.far , self._load_cube_img(skybox_files) )
+		self.scene = Scene( self.fov , 1 , self.near , self.far , self._load_cube_img(skybox_files) , self._load_img(duck_file) )
 		self.drawing_area.add( self.scene )
 
 		win_main = builder.get_object("win_main")
