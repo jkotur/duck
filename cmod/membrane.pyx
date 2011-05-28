@@ -8,7 +8,7 @@ import math as m
 import numpy as np
  
 cdef float d( int i , int j ) :
-	return 0.95 * min( 1 , min(i,j)/0.2 ) 
+	return 0.97 * min( 1 , min(i,j)/0.05 ) 
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
@@ -45,7 +45,7 @@ def step( np.ndarray[ float , ndim=2 ] win not None , np.ndarray[ float , ndim=2
 
 			wout[i,j] = d(i,j)*(A*(zipj+zimj+zijp+zijm)+B*zij-zoij)
 
-			if wout[i,j] > 4.0 or wout[i,j] < -4.0 :
+			if wout[i,j] > 10.0 or wout[i,j] < -10.0 :
 					print '<<<<<<<<<<<<'
 					print n , h , c , dt
 					print A

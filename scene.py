@@ -58,9 +58,10 @@ class Scene :
 
 		self.box.draw()
 
-		p = self.path.next( dt )
-		self.water.drop( *((p+1.0)*self.water.n/2.0) )
-		self.water.step( dt )
+		self.path.next( dt )
+		self.water.drop( *((self.path.value+1.0)*self.water.n/2.0) ,
+				force = np.linalg.norm(self.path.tangent)*25 )
+		self.water.step( dt * .5 )
 		self.water.draw( self.box.texture , self.camera.matrix )
 
 		self.duck.draw( self.path.value , self.path.tangent )

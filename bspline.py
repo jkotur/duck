@@ -11,7 +11,7 @@ def rekN( n , i ,  t ) :
 
 class BSpline :
 	def __init__( self , xbounds , ybounds ) :
-		self.nums = 256
+		self.nums = 512
 		self.xb = xbounds
 		self.yb = ybounds
 		self._init_bspline()

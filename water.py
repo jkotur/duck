@@ -22,7 +22,7 @@ class Water :
 		self.norm= np.zeros( (self.n,self.n,3) , np.float32 )
 
 		self.drop_time = 0.0
-		self.next_drop = rnd.uniform(0.0,2.0)
+		self.next_drop = rnd.uniform(0.0,0.5)
 
 		self.prog = self.loc_mmv = self.loc_mp = self.loc_norms = 0
 
@@ -39,8 +39,8 @@ class Water :
 	def add( self , x , y , v ) :
 		self.w1[x][y]+= v
 
-	def drop( self , x , y ) :
-		self.add( x , y , rnd.gauss(-0.5,0.25) )
+	def drop( self , x , y , force = 1.0 ) :
+		self.add( x , y , rnd.gauss(0.0,force) )
 
 	def drop_rnd( self ) :
 		self.drop( rnd.uniform(0.0,self.n) , rnd.uniform(0.0,self.n) )
@@ -53,7 +53,7 @@ class Water :
 		self.drop_time += dt
 		while self.drop_time >= self.next_drop :
 			self.drop_time -= self.next_drop
-			self.next_drop  = rnd.uniform(0.0,2.0)
+			self.next_drop  = rnd.uniform(0.0,0.5)
 			self.drop_rnd()
 			print self.drop_time , self.next_drop
 
