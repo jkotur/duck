@@ -77,7 +77,10 @@ def to_normals( np.ndarray[ float , ndim=2 ] mem , np.ndarray[ float , ndim=3 ] 
 	'''
 	cdef int i , j
 	cdef float p , n1 , n2 , n3 , n4
-	cdef np.ndarray[ float , ndim=1 ] an1 , an2 , an3 , an4
+	cdef np.ndarray[ float , ndim=1 ] an1 = np.zeros(3,np.float32)
+	cdef np.ndarray[ float , ndim=1 ] an2 = np.zeros(3,np.float32)
+	cdef np.ndarray[ float , ndim=1 ] an3 = np.zeros(3,np.float32)
+	cdef np.ndarray[ float , ndim=1 ] an4 = np.zeros(3,np.float32)
 
 	for i in range(n) :
 		for j in range(n) :
@@ -87,12 +90,32 @@ def to_normals( np.ndarray[ float , ndim=2 ] mem , np.ndarray[ float , ndim=3 ] 
 			n3 = mem[i+1,j  ] if i+1 <  n else p
 			n4 = mem[i  ,j-1] if j-1 >= 0 else p
 
-			an1 = np.array((i  , n1, j+1),np.float32)
-			an2 = np.array((i-1, n2, j  ),np.float32)
-			an3 = np.array((i+1, n3, j  ),np.float32)
-			an4 = np.array((i  , n4, j-1),np.float32)
+			an1[0] = i
+			an1[1] = n1
+			an1[2] = j+1
 
-			norm[i,j] = np.cross( an3-an2 , an1-an4 )
+			an2[0] = i-1
+			an2[1] = n2
+			an2[2] = j
+
+			an3[0] = i+1
+			an3[1] = n3
+			an3[2] = j
+
+			an4[0] = i
+			an4[1] = n3
+			an4[2] = j-1
+
+			an1[0] = an1[0] - an4[0]
+			an1[1] = an1[1] - an4[1]
+			an1[2] = an1[2] - an4[2]
+			an3[0] = an3[0] - an2[0]
+			an3[1] = an3[1] - an2[1]
+			an3[2] = an3[2] - an2[2]
+
+			norm[i,j,0] = ((an3[1] * an1[2]) - (an3[2] * an1[1]))
+			norm[i,j,1] = ((an3[2] * an1[0]) - (an3[0] * an1[2]))
+			norm[i,j,2] = ((an3[0] * an1[1]) - (an3[1] * an1[0]))
 
 	return None
 
