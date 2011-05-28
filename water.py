@@ -40,7 +40,7 @@ class Water :
 		self.w1[x][y]+= v
 
 	def drop( self , x , y ) :
-		self.add( x , y , rnd.gauss(-0.25,0.5) )
+		self.add( x , y , rnd.gauss(-0.5,0.25) )
 
 	def drop_rnd( self ) :
 		self.drop( rnd.uniform(0.0,self.n) , rnd.uniform(0.0,self.n) )
@@ -85,6 +85,7 @@ class Water :
 			self.loc_mp    = sh.get_loc(self.prog,'projection')
 			self.loc_norms = sh.get_loc(self.prog,'normalmap' )
 			self.loc_cube  = sh.get_loc(self.prog,'cubemap'   )
+			self.loc_cam   = sh.get_loc(self.prog,'campos'    )
 		except ValueError as ve :
 			print "Shader compilation failed: " + str(ve)
 			sys.exit(0)    
@@ -95,16 +96,18 @@ class Water :
 		glTexImage2D(GL_TEXTURE_2D,0,GL_RGB16F,self.n,self.n,0,GL_RGB,GL_FLOAT,self.norm)
 		glBindTexture(GL_TEXTURE_2D, 0)
 
-	def draw( self , cube_tex ) :
+	def draw( self , cube_tex , cam_mat ) :
 		glUseProgram( self.prog )
                  
 		mmv = glGetFloatv(GL_MODELVIEW_MATRIX)
 		mp  = glGetFloatv(GL_PROJECTION_MATRIX)
+		cam_pos = np.dot(np.array((0,0,0,1)),np.linalg.inv(cam_mat))
 						 
 		glUniformMatrix4fv(self.loc_mmv,1,GL_FALSE,mmv)
 		glUniformMatrix4fv(self.loc_mp ,1,GL_FALSE,mp )
 		glUniform1i(self.loc_norms,0)
 		glUniform1i(self.loc_cube ,1)
+		glUniform3f(self.loc_cam,cam_pos[0],cam_pos[1],cam_pos[2])
 
 		glActiveTexture(GL_TEXTURE0)
 		glBindTexture(GL_TEXTURE_2D, self.ntex )

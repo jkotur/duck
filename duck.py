@@ -14,7 +14,7 @@ from scene import Scene
 from image import Image , CubeImage
 
 ui_file = "duck.ui"
-skybox_files = [ "data/test{0}.png".format(i) for i in range(6) ]
+skybox_files = [ "data/cube{0}.png".format(i) for i in range(6) ]
 
 class App(object):
 	"""Application main class"""

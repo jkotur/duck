@@ -2,6 +2,8 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+import numpy as np
+
 class Camera :
 	def __init__( self , eye , center , up ) :
 		glMatrixMode( GL_PROJECTION )
@@ -25,7 +27,10 @@ class Camera :
 		glPopMatrix()
 
 	def move( self , fwd , right , up ) :
-		self.m[3][2] += fwd
-		self.m[3][1] += up
-		self.m[3][0] += right
+		self.m[3,2] += fwd
+		self.m[3,1] += up
+		self.m[3,0] += right
 
+	@property
+	def matrix( self ) :
+		return self.m

@@ -30,7 +30,7 @@ class Scene :
 
 		self.last_time = timer()
 
-		self.water = Water( 96 )
+		self.water = Water( 128 )
 		self.box   = Skybox( skybox_img )
 
 		self.water.drop_rnd()
@@ -54,7 +54,7 @@ class Scene :
 		self.box.draw()
 
 		self.water.step( dt )
-		self.water.draw( self.box.texture )
+		self.water.draw( self.box.texture , self.camera.matrix )
 
 		self.last_time = self.time
 

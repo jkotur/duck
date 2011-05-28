@@ -45,7 +45,7 @@ def step( np.ndarray[ float , ndim=2 ] win not None , np.ndarray[ float , ndim=2
 
 			wout[i,j] = d(i,j)*(A*(zipj+zimj+zijp+zijm)+B*zij-zoij)
 
-			if wout[i,j] > 1.0 or wout[i,j] < -1.0 :
+			if wout[i,j] > 4.0 or wout[i,j] < -4.0 :
 					print '<<<<<<<<<<<<'
 					print n , h , c , dt
 					print A
