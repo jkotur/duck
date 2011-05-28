@@ -16,6 +16,7 @@ from water import Water
 from skybox import Skybox
 from camera import Camera
 from mesh import Mesh
+from bspline import BSpline
 
 if sys.platform.startswith('win') :
 	timer = time.clock
@@ -34,6 +35,7 @@ class Scene :
 		self.water = Water( 128 )
 		self.box   = Skybox( skybox_img )
 		self.duck  = Mesh( 'data/duck.gpt' , duck_img )
+		self.path  = BSpline( (-1,1) , (-1,1) )
 
 		self.water.drop_rnd()
 
@@ -56,6 +58,8 @@ class Scene :
 
 		self.box.draw()
 
+		p = self.path.next( dt )
+		self.water.drop( *((p+1.0)*self.water.n/2.0) )
 		self.water.step( dt )
 		self.water.draw( self.box.texture , self.camera.matrix )
 
