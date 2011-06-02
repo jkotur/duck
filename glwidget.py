@@ -36,8 +36,6 @@ class GLDrawingArea(gtk.DrawingArea, gtk.gtkgl.Widget):
 		gldrawable = self.get_gl_drawable()
 		glcontext = self.get_gl_context()
 
-		print 'Realize!'
-
 		# OpenGL begin.
 		if not gldrawable.gl_begin(glcontext):
 			return
@@ -56,8 +54,6 @@ class GLDrawingArea(gtk.DrawingArea, gtk.gtkgl.Widget):
 
 		self.width = self.allocation.width
 		self.height = self.allocation.height
-
-		print 'Configure!'
 
 		# OpenGL begin
 		if not gldrawable.gl_begin(glcontext):

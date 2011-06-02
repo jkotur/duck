@@ -55,7 +55,6 @@ class Water :
 			self.drop_time -= self.next_drop
 			self.next_drop  = rnd.uniform(0.0,0.5)
 			self.drop_rnd()
-			print self.drop_time , self.next_drop
 
 	def _up_water( self , dt ) :
 		t = 0.0

@@ -8,7 +8,7 @@ import math as m
 import numpy as np
  
 cdef float d( int i , int j ) :
-	return 0.95 * min( 1 , min(i,j)/0.05 ) 
+	return 0.95 * min( 1 , min(i,j)/0.02 ) 
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
